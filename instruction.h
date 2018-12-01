@@ -1,4 +1,6 @@
 // instruction.h
+#ifndef INSTRUCTION
+#define INSTRUCTION 
 
 #include <string>
 #include <vector>
@@ -17,16 +19,17 @@ public:
     Instruction* make_nop() const;
 
     void print() const;
-    virtual bool is_branch() const {return false;}
+    bool is_branch() const {return false;}
 
+protected:
     std::string function;
     std::string destination;
     std::string arg1;
     std::string arg2;
-
-protected:
-    std::string printable;
     std::vector<int> stage_at_cycle;
+
+private:
+    std::string printable;
     bool is_active;
     bool is_done;
     int stall_count;
@@ -54,6 +57,15 @@ public:
 };
 
 
+class nop : public Instruction {
+public:
+    nop();
+    void write_back(std::map<std::string, int>& registers) const {return;};
+};
+
+
+// Small classes for each instruction type
+// Just handle execution of what the instruction does
 
 // add, addi, and, andi, or, ori, slt, slti, beq, bne
 
@@ -69,8 +81,7 @@ public:
     void write_back(std::map<std::string, int>& registers) const;
 };
 
-// g++ doesn't like classes named "or"
-class or_ : public NonBranch {
+class or_ : public NonBranch {      // g++ doesn't like classes named "or"
 public:
     or_(const std::string& f, const std::string& s) : NonBranch(f,s) {};
     void write_back(std::map<std::string, int>& registers) const;
@@ -105,3 +116,5 @@ public:
     bne(const std::string& f, const std::string& s) : Branch(f,s) {};
     bool branch_taken(std::map<std::string, int>& registers) const;
 };
+
+#endif
