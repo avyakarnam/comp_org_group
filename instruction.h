@@ -22,7 +22,7 @@ public:
     Instruction* make_nop() const;
 
     void print() const;
-    bool is_branch() const {return false;}
+    virtual bool is_branch() const {return false;}
     int get_stage(int cycle) const {return stage_at_cycle[cycle];}
     bool done() const {return is_done;}
 

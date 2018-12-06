@@ -61,7 +61,7 @@ Instruction* create_instruction(const InstructionData& i) {
     }
 }
 
-void data_hazards(InstructionStack& instructions, InstructionStack::iterator instr, bool forwarding) {
+void data_hazards(InstructionStack& instructions, const InstructionStack::iterator instr, bool forwarding) {
     if(instr == instructions.begin())       // no data hazard for first instruction
         return;
     InstructionStack::iterator other = instr;
@@ -233,5 +233,5 @@ int main(int argc, char const *argv[]) {
     std::cout << "END OF SIMULATION" << std::endl;
 
 
-    return 0;
+    return EXIT_SUCCESS;
 }
