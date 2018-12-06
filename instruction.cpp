@@ -66,35 +66,54 @@ nop::nop() : Instruction("nop","") {
 }
 
 void add::write_back(std::map<std::string, int>& registers) const {
-    // TODO
+    registers[destination] = registers[arg1] + registers[arg2];
 }
 
 void addi::write_back(std::map<std::string, int>& registers) const {
-    //TODO
+    if(arg1[0] != '$')  // arg1 is the immediate operand
+        registers[destination] = atoi(arg1.c_str()) + registers[arg2];
+    else    // arg2 is the immediate operand
+        registers[destination] = registers[arg1] + atoi(arg2.c_str());
+}
+
+void and_::write_back(std::map<std::string, int>& registers) const {
+    registers[destination] = registers[arg1] & registers[arg2];
+}
+
+void andi::write_back(std::map<std::string, int>& registers) const {
+    if(arg1[0] != '$')  // arg1 is the immediate operand
+        registers[destination] = atoi(arg1.c_str()) & registers[arg2];
+    else    // arg2 is the immediate operand
+        registers[destination] = registers[arg1] & atoi(arg2.c_str());
 }
 
 void or_::write_back(std::map<std::string, int>& registers) const {
-    //TODO
+    registers[destination] = registers[arg1] | registers[arg2];
 }
 
 void ori::write_back(std::map<std::string, int>& registers) const {
-    //TODO
+    if(arg1[0] != '$')  // arg1 is the immediate operand
+        registers[destination] = atoi(arg1.c_str()) | registers[arg2];
+    else    // arg2 is the immediate operand
+        registers[destination] = registers[arg1] | atoi(arg2.c_str());
 }
 
 void slt::write_back(std::map<std::string, int>& registers) const {
-    //TODO
+    registers[destination] = registers[arg1] < registers[arg2];
 }
 
 void slti::write_back(std::map<std::string, int>& registers) const {
-    //TODO
+    if(arg1[0] != '$')  // arg1 is the immediate operand
+        registers[destination] = atoi(arg1.c_str()) < registers[arg2];
+    else    // arg2 is the immediate operand
+        registers[destination] = registers[arg1] < atoi(arg2.c_str());
 }
 
+// Note: I don't think you can have a beq/bne with an immediate operand
 bool beq::branch_taken(std::map<std::string, int>& registers) const {
-    // TODO
-    return false;
+    return registers[arg1] == registers[arg2];
 }
 
 bool bne::branch_taken(std::map<std::string, int>& registers) const {
-    // TODO
-    return false;
+    return registers[arg1] != registers[arg2];
 }

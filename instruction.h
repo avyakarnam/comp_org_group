@@ -26,10 +26,10 @@ public:
     bool is_branch() const {return false;}
     int get_stage() const {return stage_at_cycle[clock_cycle];}
 
-protected:
-    std::string function;
 private:
+    std::string function;
     std::string printable;
+    
 protected:
     std::string destination;
     std::string arg1;
@@ -37,7 +37,6 @@ protected:
     std::vector<int> stage_at_cycle;
 
 private:
-    
     bool is_active;     // if the insruction is currently being incremented
     bool is_done;       // if the instruction has been completed
     int stall_count;
@@ -86,6 +85,18 @@ public:
 class addi : public NonBranch {
 public:
     addi(const std::string& f, const std::string& s) : NonBranch(f,s) {};
+    void write_back(std::map<std::string, int>& registers) const;
+};
+
+class and_ : public NonBranch {     // g++ doesn't like classes named "and"
+public:
+    and_(const std::string& f, const std::string& s) : NonBranch(f,s) {};
+    void write_back(std::map<std::string, int>& registers) const;
+};
+
+class andi : public NonBranch {
+public:
+    andi(const std::string& f, const std::string& s) : NonBranch(f,s) {};
     void write_back(std::map<std::string, int>& registers) const;
 };
 
