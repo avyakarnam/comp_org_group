@@ -12,19 +12,19 @@ extern std::vector<std::string> num_to_status;
 class Instruction {
 public:
     Instruction(const std::string& f, const std::string& s): 
-        function(f), printable(s), stage_at_cycle(17,0), is_active(false), is_done(false), stall_count(0) {};
+        function(f), printable(s), stage_at_cycle(17,0), is_active(true), is_done(false), stall_count(0) {};
     virtual ~Instruction() {}
 
-    void activate() {is_active = true;}
     void increment_stage();
     void add_stall(int num_stalls);
     virtual void write_back(std::map<std::string, int>& registers) const = 0;
-    bool data_hazard_with(const Instruction& other) const;
+    bool data_hazard_with(const Instruction* other) const;
     Instruction* make_nop() const;
 
     void print() const;
     bool is_branch() const {return false;}
-    int get_stage() const {return stage_at_cycle[clock_cycle];}
+    int get_stage(int cycle) const {return stage_at_cycle[cycle];}
+    bool done() const {return is_done;}
 
 private:
     std::string function;

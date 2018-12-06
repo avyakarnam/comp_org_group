@@ -26,8 +26,8 @@ void Instruction::add_stall(int num_stalls) {
     // more?
 }
 
-bool Instruction::data_hazard_with(const Instruction &other) const {
-    return (other.destination == arg1) || (other.destination == arg2);
+bool Instruction::data_hazard_with(const Instruction* other) const {
+    return (other -> destination == arg1) || (other -> destination == arg2);
 }
 
 Instruction* Instruction::make_nop() const {
