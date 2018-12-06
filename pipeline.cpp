@@ -2,6 +2,7 @@
 #include <fstream>
 #include <list>
 #include <iomanip>
+#include <sstream>
 #include "instruction.h"
 
 /********************************** Typedefs **********************************/
@@ -95,6 +96,22 @@ void print_cycles() {
     std::cout << std::setw(20) << std::left << "CPU Cyles ===>";
     for(int i = 1; i < 17; i++) {
         std::cout << " " << std::setw(4) << std::left << i;
+    }
+    std::cout << std::endl;
+}
+
+void print_registers(const RegisterMap& registers) {
+    std::cout << std::endl;
+    RegisterMap::const_iterator i = registers.begin();
+    int counter = 1;
+    for(; i != registers.end(); i++, counter++) {
+        if(i -> first == "$zero")
+            continue;
+        std::stringstream unit;     // absolute unit
+        unit << i -> first << " = " << i -> second;
+        std::cout << std::setw(20) << std::left << unit.str();      // setw remains the most useless function in the STL
+        if(counter % 4 == 0)
+            std::cout << std::endl;
     }
     std::cout << std::endl;
 }
@@ -195,12 +212,18 @@ int main(int argc, char const *argv[]) {
         }
         
         for(InstructionStack::iterator i = instructions.begin(); i != instructions.end(); i++) {
-            if((*i) -> get_stage(clock_cycle-1) == 2) {        // ID stage
+            if((*i) -> get_stage(clock_cycle-1) == 2) {         // ID stage
                 data_hazards(instructions, i, forwarding);
             }
             (*i) -> increment_stage();
+
+            if((*i) -> get_stage(clock_cycle) == 5)             // WB stage
+                (*i) -> write_back(registers);
+
             (*i) -> print();
         }
+
+        print_registers(registers);
 
         if((*(--instructions.end())) -> done())     // the last instruction is done
             break;
