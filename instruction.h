@@ -6,17 +6,16 @@
 #include <vector>
 #include <map>
 
-// global clock cycle
-int clock_cycle;
-// To convert stage numbers to status symbols
-std::vector<std::string> num_to_status = {".", "IF", "ID", "EX", "MEM", "WB", ".", "*", "*", "*", "."};
+extern int clock_cycle;
+extern std::vector<std::string> num_to_status;
 
 class Instruction {
 public:
     Instruction(const std::string& f, const std::string& s): 
         function(f), printable(s), stage_at_cycle(17,0), is_active(false), is_done(false), stall_count(0) {};
-    virtual ~Instruction();
+    virtual ~Instruction() {}
 
+    void activate() {is_active = true;}
     void increment_stage();
     void add_stall(int num_stalls);
     virtual void write_back(std::map<std::string, int>& registers) const = 0;
@@ -29,13 +28,16 @@ public:
 
 protected:
     std::string function;
+private:
+    std::string printable;
+protected:
     std::string destination;
     std::string arg1;
     std::string arg2;
     std::vector<int> stage_at_cycle;
 
 private:
-    std::string printable;
+    
     bool is_active;     // if the insruction is currently being incremented
     bool is_done;       // if the instruction has been completed
     int stall_count;
@@ -45,7 +47,7 @@ private:
 class Branch : public Instruction {
 public:
     Branch(const std::string& f, const std::string& s);
-    virtual ~Branch();
+    virtual ~Branch() {}
 
     void write_back(std::map<std::string, int>& registers) const {return;};
     virtual bool branch_taken(std::map<std::string, int>& registers) const = 0;
@@ -57,7 +59,7 @@ public:
 class NonBranch : public Instruction {
 public:
     NonBranch(const std::string& f, const std::string& s);
-    virtual ~NonBranch();
+    virtual ~NonBranch() {}
 
     virtual void write_back(std::map<std::string, int>& registers) const = 0;    
 };

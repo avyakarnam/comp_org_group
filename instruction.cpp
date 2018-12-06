@@ -38,7 +38,7 @@ Instruction* Instruction::make_nop() const {
 }
 
 void Instruction::print() const {
-    std::cout << std::setw(20) << std::left << function << " " << printable;
+    std::cout << std::setw(20) << std::left << (function + " " + printable);        // why is setw absolute garbage????
     for(int i = 1; i < 17; i++) {
         std::cout << " " << std::setw(4) << std::left << num_to_status[stage_at_cycle[i]];
     }
