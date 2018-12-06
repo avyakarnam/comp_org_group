@@ -1,25 +1,31 @@
 // instruction.h
-#ifndef INSTRUCTION
-#define INSTRUCTION 
+#ifndef INSTRUCTION_H
+#define INSTRUCTION_H 
 
 #include <string>
 #include <vector>
 #include <map>
 
+// global clock cycle
+int clock_cycle;
+// To convert stage numbers to status symbols
+std::vector<std::string> num_to_status = {".", "IF", "ID", "EX", "MEM", "WB", ".", "*", "*", "*", "."};
+
 class Instruction {
 public:
     Instruction(const std::string& f, const std::string& s): 
-        function(f), printable(s), stage_at_cycle(16), is_active(false), is_done(false), stall_count(0) {};
+        function(f), printable(s), stage_at_cycle(17,0), is_active(false), is_done(false), stall_count(0) {};
     virtual ~Instruction();
 
     void increment_stage();
     void add_stall(int num_stalls);
     virtual void write_back(std::map<std::string, int>& registers) const = 0;
-    bool data_hazard(const Instruction& other) const;
+    bool data_hazard_with(const Instruction& other) const;
     Instruction* make_nop() const;
 
     void print() const;
     bool is_branch() const {return false;}
+    int get_stage() const {return stage_at_cycle[clock_cycle];}
 
 protected:
     std::string function;
@@ -30,8 +36,8 @@ protected:
 
 private:
     std::string printable;
-    bool is_active;
-    bool is_done;
+    bool is_active;     // if the insruction is currently being incremented
+    bool is_done;       // if the instruction has been completed
     int stall_count;
 };
 
