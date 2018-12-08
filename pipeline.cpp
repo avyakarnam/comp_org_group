@@ -11,7 +11,7 @@ typedef std::vector<InstructionData> InstructionDataQueue;
 typedef std::list<Instruction*> InstructionStack;
 typedef std::map<std::string, int> RegisterMap;
 typedef std::map<std::string, int> BranchMap;
- 
+
 /*********************************** Globals **********************************/
 // global clock cycle
 int clock_cycle;

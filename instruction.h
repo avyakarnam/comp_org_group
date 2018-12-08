@@ -37,7 +37,7 @@ protected:
     std::vector<int> stage_at_cycle;
 
 private:
-    bool is_active;     // if the insruction is currently being incremented
+    bool is_active;     // if the instruction is currently being incremented
     bool is_done;       // if the instruction has been completed
     int stall_count;
 };
@@ -134,6 +134,7 @@ class bne : public Branch {
 public:
     bne(const std::string& f, const std::string& s) : Branch(f,s) {};
     bool branch_taken(std::map<std::string, int>& registers) const;
+	void override();
 };
 
 #endif
