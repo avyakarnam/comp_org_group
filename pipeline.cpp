@@ -202,7 +202,7 @@ int main(int argc, char const *argv[]) {
         {"$zero", 0}
     };
     InstructionStack instructions;
-    int instruction_num = 0;
+    unsigned int instruction_num = 0;
 
 
     // Simulation
