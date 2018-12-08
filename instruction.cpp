@@ -117,3 +117,7 @@ bool beq::branch_taken(std::map<std::string, int>& registers) const {
 bool bne::branch_taken(std::map<std::string, int>& registers) const {
     return registers[arg1] != registers[arg2];
 }
+
+void bne::override() {
+	stall_count += (5 - get_stage(clock_cycle - 1));
+}

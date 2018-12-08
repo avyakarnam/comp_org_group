@@ -71,6 +71,7 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
     if((*instr) -> data_hazard_with(*other)) {
         for(int i = 0; i < 1 + !forwarding; i++) {
             Instruction* new_nop = (*instr) -> make_nop();
+            new_nop -> print();
             instructions.insert(instr, new_nop);
         }
         (*instr) -> add_stall(1 + !forwarding);
@@ -82,6 +83,7 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
         other--;
         if((*instr) -> data_hazard_with(*other)) {
             Instruction* new_nop = (*instr) -> make_nop();
+            new_nop -> print();
             instructions.insert(instr, new_nop);
             (*instr) -> add_stall(1);
         }
@@ -226,8 +228,13 @@ int main(int argc, char const *argv[]) {
             }
             (*i) -> increment_stage();
 
-            if((*i) -> get_stage(clock_cycle) == 5)             // WB stage
+            if((*i) -> get_stage(clock_cycle) == 5) {             // WB stage
                 (*i) -> write_back(registers);
+                if((*i) -> is_branch()) {
+                    if(dynamic_cast<Branch*>(*i) -> branch_taken(registers))
+                        control_hazards(instructions, i);
+                }
+            }
 
             (*i) -> print();
         }
