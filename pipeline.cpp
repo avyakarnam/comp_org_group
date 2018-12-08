@@ -219,8 +219,13 @@ int main(int argc, char const *argv[]) {
             }
             (*i) -> increment_stage();
 
-            if((*i) -> get_stage(clock_cycle) == 5)             // WB stage
+            if((*i) -> get_stage(clock_cycle) == 5) {             // WB stage
                 (*i) -> write_back(registers);
+                if((*i) -> is_branch()) {
+                    if(dynamic_cast<Branch*>(*i) -> branch_taken(registers))
+                        control_hazards(instructions, i);
+                }
+            }
 
             (*i) -> print();
         }
