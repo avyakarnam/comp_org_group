@@ -39,6 +39,7 @@ Instruction* Instruction::make_nop() const {
 
 void Instruction::override() {
 	stall_count += (5 - get_stage(clock_cycle - 1));
+    stage_at_cycle[clock_cycle] = 8;
 }
 
 void Instruction::print() const {

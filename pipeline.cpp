@@ -94,7 +94,8 @@ void control_hazards(InstructionStack& instructions, const InstructionStack::ite
     //update instruction numbers
     //insert the new instruction
     //call the override function
-    for(InstructionStack::iterator i = instr, int instr_cout = 0; i != instructions.end() && instr_count<3 ; i++, instr_count++) {
+    int instr_count = 0;
+    for(InstructionStack::iterator i = instr; i != instructions.end() && instr_count<3 ; i++, instr_count++) {
         (*instr) -> override();
     }
 }
