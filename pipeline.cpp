@@ -232,8 +232,14 @@ int main(int argc, char const *argv[]) {
             if((*i) -> get_stage(clock_cycle) == 5) {             // WB stage
                 (*i) -> write_back(registers);
                 if((*i) -> is_branch()) {
-                    if(dynamic_cast<Branch*>(*i) -> branch_taken(registers))
+                    if(dynamic_cast<Branch*>(*i) -> branch_taken(registers)) {
                         control_hazards(instructions, i);
+
+                        // update instruction_num to appropriate post-loop position
+                        instruction_num = branch_labels[dynamic_cast<Branch*>(*i) -> get_destination()];
+                        instructions.push_back(create_instruction(instruction_memory[instruction_num]));
+                        instruction_num++;
+                    }
                 }
             }
 

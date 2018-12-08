@@ -53,6 +53,7 @@ public:
     virtual bool branch_taken(std::map<std::string, int>& registers) const = 0;
 
     bool is_branch() const {return true;}
+    std::string get_destination() const {return destination;}
 };
 
 
