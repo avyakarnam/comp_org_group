@@ -90,14 +90,18 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
     }
 }
 
-void control_hazards(InstructionStack& instructions, const InstructionStack::iterator instr){
+int control_hazards(InstructionStack& instructions, const InstructionStack::iterator instr){
     //update instruction numbers
     //insert the new instruction
     //call the override function
     int instr_count = 0;
-    for(InstructionStack::iterator i = instr; i != instructions.end() && instr_count<3 ; i++, instr_count++) {
-        (*instr) -> override();
+    InstructionStack::iterator i = instr;
+    i++;
+    for(instr_count=0; i != instructions.end() && instr_count<3 ; i++, instr_count++) {
+        (*i) -> override();
+        (*i) -> print();
     }
+    return instr_count;
 }
 
 void print_dashes() {
@@ -233,12 +237,19 @@ int main(int argc, char const *argv[]) {
                 (*i) -> write_back(registers);
                 if((*i) -> is_branch()) {
                     if(dynamic_cast<Branch*>(*i) -> branch_taken(registers)) {
-                        control_hazards(instructions, i);
+                        (*i) -> print();
+                        
+                        int instr_skipped = control_hazards(instructions, i);
 
                         // update instruction_num to appropriate post-loop position
                         instruction_num = branch_labels[dynamic_cast<Branch*>(*i) -> get_destination()];
                         instructions.push_back(create_instruction(instruction_memory[instruction_num]));
                         instruction_num++;
+
+                        for(int j = 0; j < instr_skipped; j++)
+                            i++;
+
+                        continue;
                     }
                 }
             }
