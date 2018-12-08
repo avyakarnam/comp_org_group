@@ -71,6 +71,7 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
     if((*instr) -> data_hazard_with(*other)) {
         for(int i = 0; i < 1 + !forwarding; i++) {
             Instruction* new_nop = (*instr) -> make_nop();
+            new_nop -> print();
             instructions.insert(instr, new_nop);
         }
         (*instr) -> add_stall(1 + !forwarding);
@@ -82,6 +83,7 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
         other--;
         if((*instr) -> data_hazard_with(*other)) {
             Instruction* new_nop = (*instr) -> make_nop();
+            new_nop -> print();
             instructions.insert(instr, new_nop);
             (*instr) -> add_stall(1);
         }
