@@ -21,6 +21,7 @@ public:
     bool data_hazard_with(const Instruction* other) const;
     Instruction* make_nop() const;
 
+	void override();
     void print() const;
     virtual bool is_branch() const {return false;}
     int get_stage(int cycle) const {return stage_at_cycle[cycle];}
@@ -134,7 +135,6 @@ class bne : public Branch {
 public:
     bne(const std::string& f, const std::string& s) : Branch(f,s) {};
     bool branch_taken(std::map<std::string, int>& registers) const;
-	void override();
 };
 
 #endif

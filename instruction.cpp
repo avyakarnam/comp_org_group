@@ -37,6 +37,10 @@ Instruction* Instruction::make_nop() const {
     return res;
 }
 
+void Instruction::override() {
+	stall_count += (5 - get_stage(clock_cycle - 1));
+}
+
 void Instruction::print() const {
     std::cout << std::setw(20) << std::left << (function + " " + printable);        // why is setw absolute garbage????
     for(int i = 1; i < 17; i++) {
@@ -116,8 +120,4 @@ bool beq::branch_taken(std::map<std::string, int>& registers) const {
 
 bool bne::branch_taken(std::map<std::string, int>& registers) const {
     return registers[arg1] != registers[arg2];
-}
-
-void bne::override() {
-	stall_count += (5 - get_stage(clock_cycle - 1));
 }
