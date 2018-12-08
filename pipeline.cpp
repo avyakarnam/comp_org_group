@@ -88,6 +88,15 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
     }
 }
 
+void control_hazards(InstructionStack& instructions, const InstructionStack::iterator instr){
+    //update instruction numbers
+    //insert the new instruction
+    //call the override function
+    for(InstructionStack::iterator i = instr, int instr_cout = 0; i != instructions.end() && instr_count<3 ; i++, instr_count++) {
+        (*instr) -> override();
+    }
+}
+
 void print_dashes() {
     std::cout << std::string(20 + 5*16, '-') << std::endl;
 }
@@ -235,4 +244,3 @@ int main(int argc, char const *argv[]) {
 
     return EXIT_SUCCESS;
 }
-//hello
