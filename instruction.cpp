@@ -44,10 +44,10 @@ void Instruction::override() {
 
 void Instruction::print() const {
     std::cout << std::setw(20) << std::left << (function + " " + printable);        // why is setw absolute garbage????
-    for(int i = 1; i < 17; i++) {
-        std::cout << " " << std::setw(4) << std::left << num_to_status[stage_at_cycle[i]];
+    for(int i = 1; i < 16; i++) {
+        std::cout << std::setw(4) << std::left << num_to_status[stage_at_cycle[i]];
     }
-    std::cout << std::endl;
+    std::cout << num_to_status[stage_at_cycle[16]] << std::endl;     // to avoid extra spaces after the last value
 }
 
 Branch::Branch(const std::string& f, const std::string& s) : Instruction(f,s) {

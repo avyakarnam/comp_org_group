@@ -38,11 +38,11 @@ Instruction* create_instruction(const InstructionData& i) {
         return new add(f, s);
     else if(f == "addi")
         return new addi(f, s);
-    else if(f == "and_")
+    else if(f == "and")
         return new and_(f, s);
     else if(f == "andi")
         return new andi(f, s);
-    else if(f == "or_")
+    else if(f == "or")
         return new or_(f, s);
     else if(f == "ori")
         return new ori(f, s);
@@ -61,9 +61,9 @@ Instruction* create_instruction(const InstructionData& i) {
     }
 }
 
-void data_hazards(InstructionStack& instructions, const InstructionStack::iterator instr, bool forwarding) {
+int data_hazards(InstructionStack& instructions, const InstructionStack::iterator instr, bool forwarding) {
     if(instr == instructions.begin())       // no data hazard for first instruction
-        return;
+        return 0;
     InstructionStack::iterator other = instr;
 
     // Checking 1 instruction back
@@ -75,7 +75,14 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
             instructions.insert(instr, new_nop);
         }
         (*instr) -> add_stall(1 + !forwarding);
-        return;
+
+        InstructionStack::iterator j = instr;
+        j++;
+        for(; j != instructions.end(); j++) {
+            (*j) -> add_stall(1 + !forwarding);
+        }
+
+        return 1 + !forwarding;
     }
 
     // Checking 2 instructions back
@@ -86,14 +93,20 @@ void data_hazards(InstructionStack& instructions, const InstructionStack::iterat
             new_nop -> print();
             instructions.insert(instr, new_nop);
             (*instr) -> add_stall(1);
+
+            InstructionStack::iterator j = instr;
+            j++;
+            for(; j != instructions.end(); j++) {
+                (*j) -> add_stall(1);
+            }
+
+            return 1;
         }
     }
+    return 0;
 }
 
 int control_hazards(InstructionStack& instructions, const InstructionStack::iterator instr){
-    //update instruction numbers
-    //insert the new instruction
-    //call the override function
     int instr_count = 0;
     InstructionStack::iterator i = instr;
     i++;
@@ -105,15 +118,15 @@ int control_hazards(InstructionStack& instructions, const InstructionStack::iter
 }
 
 void print_dashes() {
-    std::cout << std::string(20 + 5*16, '-') << std::endl;
+    std::cout << std::string(20 + 5*16 - 18, '-') << std::endl;
 }
 
 void print_cycles() {
-    std::cout << std::setw(20) << std::left << "CPU Cyles ===>";
-    for(int i = 1; i < 17; i++) {
-        std::cout << " " << std::setw(4) << std::left << i;
+    std::cout << std::setw(20) << std::left << "CPU Cycles ===>";
+    for(int i = 1; i < 16; i++) {
+        std::cout << std::setw(4) << std::left << i;
     }
-    std::cout << std::endl;
+    std::cout << 16 << std::endl;   // to avoid extra spaces
 }
 
 void print_registers(const RegisterMap& registers) {
@@ -125,11 +138,11 @@ void print_registers(const RegisterMap& registers) {
             continue;
         std::stringstream unit;     // absolute unit
         unit << i -> first << " = " << i -> second;
-        std::cout << std::setw(20) << std::left << unit.str();      // setw remains the most useless function in the STL
-        if(counter % 4 == 0)
-            std::cout << std::endl;
+        if(counter % 4 == 0 || counter == 18)                       // avoid extra spaces on last register per each line
+            std::cout << std::left << unit.str() << std::endl;
+        else
+            std::cout << std::setw(20) << std::left << unit.str();
     }
-    std::cout << std::endl;
 }
 
 int main(int argc, char const *argv[]) {
@@ -207,6 +220,7 @@ int main(int argc, char const *argv[]) {
     };
     InstructionStack instructions;
     unsigned int instruction_num = 0;
+    int stall_count = 0;
 
 
     // Simulation
@@ -218,18 +232,19 @@ int main(int argc, char const *argv[]) {
         print_cycles();
         // add instruction (if possible)
         // check for hazards
-        //      inset nops
+        //      insert nops
         // increment stage
         // print
 
-        if(instruction_num != instruction_memory.size()) {    // not out of instructions
+        if(instruction_num != instruction_memory.size()) {      // not out of instructions
+
             instructions.push_back(create_instruction(instruction_memory[instruction_num]));
             instruction_num++;
         }
         
         for(InstructionStack::iterator i = instructions.begin(); i != instructions.end(); i++) {
             if((*i) -> get_stage(clock_cycle-1) == 2) {         // ID stage
-                data_hazards(instructions, i, forwarding);
+                stall_count += data_hazards(instructions, i, forwarding);
             }
             (*i) -> increment_stage();
 
